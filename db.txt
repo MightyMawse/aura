@@ -1,0 +1,3 @@
+aura-database.choigo0y258e.ap-southeast-2.rds.amazonaws.com
+3306
+negativeG
