@@ -2,6 +2,9 @@
     <head>
         <title>Aura - Login</title>
         <link rel="stylesheet" href="../static/css/default.css">
+        <script src="../static/js/login.js"></script>
+        <script src="../static/js/utils.js"></script>
+        <script src="../static/js/classes/user.js"></script>
     </head>
     <body>
         <h1 class="title-text" style="text-align: center; position: relative; top: 5%; color: orange; text-shadow: 0 0 10px black;">Aura</h1>
@@ -15,8 +18,14 @@
             padding: 10px; position: relative; top: 70px; background-color: gray; box-shadow: 10px 10px 10px black;">
                 <div class="flex-center">
                     <div>
-                        <textarea type="text" class="input" style="position: relative; top: 100px; left: 25px" placeholder="Username"></textarea>
-                        <textarea type="text" class="input" style="position: relative; top: 150px; left: 25px" placeholder="Password"></textarea>
+                        <textarea id="username" type="text" class="input" style="position: relative; top: 100px; left: 25px" placeholder="Username"></textarea>
+                        <textarea id="password" type="text" class="input" style="position: relative; top: 150px; left: 25px" placeholder="Password"></textarea>
+                        <div class="flex-center">
+                            <a style="position: relative; top: 300px; width: 300px; padding-top: 20px; padding-bottom: 20px;
+                            font-size: 70px;" class="button" onclick="Login()">Login</a>
+                            <a style="position: relative; top: 300px; width: 300px; padding-top: 20px; padding-bottom: 20px;
+                            font-size: 70px;" class="button" onclick="Register()">Register</a>
+                        </div>
                     </div>
                 </div>
             </div>
