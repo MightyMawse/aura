@@ -1,0 +1,58 @@
+<html>
+    <head>
+        <title>Navigator</title>
+        <link rel="stylesheet" href="../static/css/default.css">
+    </head>
+    <body style="background-color: rgb(102, 102, 102);">
+        <div style="width: 100%; background-color: gray; height: 151px; position: relative;">
+            <div class="square-button" style="font-size: 60px; width: 150px; padding-top: 40px; padding-bottom: 40px;
+             display: inline-block;" onclick="Redirector('BACK')">
+                <b>&lt</b>
+            </div>
+            <p style="display: inline-block; font-size: 50px; position: relative; left: 20%;
+                font-family: Arial, Helvetica, sans-serif;">
+                <b>Navigator</b>
+            </p>
+        </div>
+
+        <!--Navigation options-->
+        <div class="option" style="position: relative; height: 150px; width: 100%;">
+            <div style="position: relative; top: 50px; left: 20px;" onclick="Redirector('VOTE')"><b>Vote</b></div>
+        </div>
+        <div class="option" style="position: relative; height: 150px; width: 100%;">
+            <div style="position: relative; top: 50px; left: 20px;" onclick="Redirector('JOIN')"><b>Join Group</b></div>
+        </div>
+        <div class="option" style="position: relative; height: 150px; width: 100%;">
+            <div style="position: relative; top: 50px; left: 20px;" onclick="Redirector('')"><b>Leave Group</b></div>
+        </div>
+        <div class="option" style="position: relative; height: 150px; width: 100%;">
+            <div style="position: relative; top: 50px; left: 20px;" onclick="Redirector('')"><b>Create Group</b></div>
+        </div>
+        <div class="option" style="position: relative; height: 150px; width: 100%;">
+            <div style="position: relative; top: 50px; left: 20px;" onclick="Redirector('')"><b>Log Out</b></div>
+        </div>
+    </body>
+</html>
+
+<script>
+    // Navigation button handlers
+    function Redirector(button){
+        switch(button){
+            case "VOTE":
+                document.location.href = "/page?name=vote";
+                break;
+            case "JOIN":
+                document.location.href = "/page?name=group-viewer";
+                break;
+            case "LEAVE":
+                document.location.href = "/page?name="; // WIP
+                break;
+            case "CREATE":
+                document.location.href = "/page?name="; // WIP
+                break;
+            case "BACK":
+                document.location.href = "/page?name=dashboard";
+                break;
+        }
+    }
+</script>

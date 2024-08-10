@@ -2,20 +2,55 @@
     <head>
         <title>Aura - Login</title>
         <link rel="stylesheet" href="../static/css/default.css">
-        <script src="../static/js/login.js"></script>
+        <script src="../static/js/classes/user.js"></script>
         <script src="../static/js/utils.js"></script>
+        <script src="../static/js/dashboard.js"></script>
     </head>
-    <body>
+    <body onload="Init(), CheckVote()">
         <div class="flex-center" style="width: 100%;">
             <!--div style="border: solid gray 1px; border-radius: 20px; width: 100%; height: 1400px;
             padding: 10px; position: relative; top: 70px; background-color: gray; box-shadow: 10px 10px 10px black;">
                 
             </div-->
-            <div style="width: 100%; background-color: gray; height: 150px;">
-                <div style="font-size: 60px; width: 150px; padding-top: 40px; padding-bottom: 40px;" class="square-button">
+
+            <!--Heading-->
+            <div style="width: 100%; background-color: gray; height: 151px; position: absolute;">
+                <div class="square-button" style="font-size: 60px; width: 150px; padding-top: 40px; padding-bottom: 40px; display: inline-block;"
+                onclick="Redirector('NAV')">
                     <b>></b>
                 </div>
+                <p style="display: inline-block; font-size: 50px; position: relative; left: 20%;
+                    font-family: Arial, Helvetica, sans-serif;">
+                    <b>Dashboard</b>
+                </p>
             </div>
+
+            <div id="username" style="position: absolute; top: 200px; font-size: 60px; color: white; font-family: Arial,
+             Helvetica, sans-serif;">
+                Username
+            </div>
+
+            <!--Aura count-->
+            <div class="aura-large" style="position: absolute; top: 330px;">
+                Aura
+            </div>
+            <p id="aura_count" class="aura-value" style="position: absolute; top: 200px;">100</p>
+        </div>
+
+        <!--Peers-->
+        <div id="peer-grid" class="grid" style="position: relative; top: 1000px; width: 800px; height: 600px;
+        margin-left: 20px;">
+            
         </div>
     </body>
 </html>
+
+<script>
+    function Redirector(button){
+        switch(button){
+            case "NAV":
+                document.location.href = "/page?name=options";
+                break;
+        }
+    }
+</script>

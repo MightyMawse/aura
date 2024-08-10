@@ -1,10 +1,21 @@
 import json
 import os
 import sql_interface
+import vote
 from flask import *
 from flask import Request
 
 app = Flask(__name__)
+
+# Terrible design, refactor later
+voteMap = {"6": []}
+
+def init():
+   # Initialise voteMap
+   query = "SELECT * FROM party;"
+   groups = sql_interface.SQLInterface.SQL_query(query)
+   for group in groups:
+      voteMap.update({group[0], []})
 
 @app.route("/")
 def root():
@@ -46,5 +57,52 @@ def create_account():
       sql_interface.SQLInterface.SQL_query(query) # Create account
    return "Ok"
 
+# Get user aura count by userID
+@app.route("/get_aura", methods=["GET"])
+def get_aura():
+   userID = request.args.get("userID")
+   out = sql_interface.SQLInterface.GetAura(userID)
+   return json.dumps(out)
+
+# Get group members by groupID
+@app.route("/get_groupmembers", methods=["GET"])
+def get_groupmembers():
+   groupID = request.args.get("groupID")
+   out = sql_interface.SQLInterface.GetMembers(groupID)
+   return json.dumps(out)
+
+@app.route("/callvote", methods=["POST"])
+def callvote():
+   # Create new vote class instance and add to votemap, 
+   # vote instance will stay until resolved by group members
+   jsonObj  = request.json # POST body
+   groupID  = jsonObj["groupID"]
+   aura     = jsonObj["aura"]
+   targetID = jsonObj["targetID"]
+   senderID = jsonObj["senderID"]
+
+   newVote = vote.Vote(groupID, aura, targetID, senderID)
+   voteMap[str(groupID)].append(newVote) # Add vote to vote map
+   return "Ok"
+
+# Return list of all votes that are active on groupID
+@app.route("/check_votemap", methods=["GET"])
+def check_votemap():
+   groupID = request.args.get("groupID")
+   jsonVote = []
+   if(len(voteMap[groupID]) > 0):
+      for vote in voteMap[groupID]:
+         jsonVote.append(json.dumps(vote.__dict__))
+   return jsonVote
+
+# Get user via userID
+@app.route("/get_user", methods=["GET"])
+def get_user():
+   userID = request.args.get("userID")
+   query = sql_interface.SQLInterface.queryMap["GET_USER"].format(userID)
+   user = sql_interface.SQLInterface.SQL_query(query)
+   return json.dumps(user)
+
 if __name__ == '__main__':
    app.run(host='0.0.0.0', debug=True, port=5000)
+   init()

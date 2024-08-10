@@ -60,6 +60,14 @@ async function LoginProcedure(username, password){
 
     var user = new User(username, userData[0][0], userData[0][2], ""); // Carry user data over to dashboard
 
+    // Get groupID seperately
+    const groupIDQuery = {query: "SELECT groupID FROM partymembers WHERE userID =" + user.userID + ";"};
+    var groupID = await ServerRequest("POST", JSON.stringify(groupIDQuery), "/sql_query");
+    
+    if(groupID[0].length > 0){
+        user.groupID = groupID[0][0]; // Try and set the group id if there is one
+    }
+
     sessionStorage.setItem("user", JSON.stringify(user));
     document.location.href = "/page?name=dashboard"; // Redirect
 }
