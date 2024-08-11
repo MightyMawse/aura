@@ -8,14 +8,14 @@ from flask import Request
 app = Flask(__name__)
 
 # Terrible design, refactor later
-voteMap = {"6": []}
+voteMap = {}
 
 def init():
    # Initialise voteMap
    query = "SELECT * FROM party;"
    groups = sql_interface.SQLInterface.SQL_query(query)
    for group in groups:
-      voteMap.update({group[0], []})
+      voteMap.update({str(group[0]): None})
 
 @app.route("/")
 def root():
@@ -55,7 +55,7 @@ def create_account():
    count = sql_interface.SQLInterface.GetAccount(username, password)
    if(count[0][0] == 0):
       sql_interface.SQLInterface.SQL_query(query) # Create account
-   return "Ok"
+   return json.dumps("Ok")
 
 # Get user aura count by userID
 @app.route("/get_aura", methods=["GET"])
@@ -82,18 +82,30 @@ def callvote():
    senderID = jsonObj["senderID"]
 
    newVote = vote.Vote(groupID, aura, targetID, senderID)
-   voteMap[str(groupID)].append(newVote) # Add vote to vote map
-   return "Ok"
+   voteMap[str(groupID)] = newVote # Change vote, subsequent votes with overwrite if not resolved
+   return json.dumps("Ok")
 
 # Return list of all votes that are active on groupID
 @app.route("/check_votemap", methods=["GET"])
 def check_votemap():
    groupID = request.args.get("groupID")
-   jsonVote = []
-   if(len(voteMap[groupID]) > 0):
-      for vote in voteMap[groupID]:
-         jsonVote.append(json.dumps(vote.__dict__))
-   return jsonVote
+   userID = request.args.get("userID")
+   if(voteMap[groupID] != None):
+      if(int(userID) in voteMap[groupID].groupMemberIDs):
+         return json.dumps(voteMap[groupID].__dict__) # Only send if vote is waiting on sender userID
+   return json.dumps("Ok")
+
+# Submit vote to votemap
+@app.route("/submit_vote", methods=["POST"])
+def submit_vote():
+   jsonObj = request.json
+   userID = jsonObj["userID"]
+   groupID = jsonObj["groupID"]
+
+   vc = voteMap[groupID]
+   if(int(userID) in vc.groupMemberIDs):
+      voteMap[groupID].groupMemberIDs.remove(int(userID))
+   return json.dumps("Ok")
 
 # Get user via userID
 @app.route("/get_user", methods=["GET"])
@@ -104,5 +116,5 @@ def get_user():
    return json.dumps(user)
 
 if __name__ == '__main__':
-   app.run(host='0.0.0.0', debug=True, port=5000)
    init()
+   app.run(host='0.0.0.0', debug=True, port=5000)

@@ -17,7 +17,7 @@ async function Init(){
     var members = await ServerRequest("GET", null, "/get_groupmembers?groupID=" + localUser.groupID);
     var elementHTML = await ServerRequest("GET", null, "/page?name=dashboard-peer-element", true);
     var grid = document.getElementById("peer-grid");
-    for(let i = 0; i < members[0].length; i++){
+    for(let i = 0; i < members.length; i++){
         var newElement = document.createElement("div");
         newElement.innerHTML = elementHTML;
 
@@ -33,15 +33,19 @@ async function CheckVote(){
         // Check if there is an active vote in voteMap
         await timer(1000);
 
-        var voteCheck = await ServerRequest("GET", null, "/check_votemap?groupID=" + localUser.groupID);
+        // Check if we have a pending vote in our group AND I havent voted yet
+        var voteCheck = await ServerRequest("GET", null, "/check_votemap?groupID=" + localUser.groupID + "&userID=" + localUser.userID);
 
-        if(voteCheck.length > 0){ // There are pending votes
-            for(let i = 0; i < voteCheck.length; i++){ // Foreach vote
-                var jsonObj = JSON.parse(voteCheck[i]);
-                var targetUser = await ServerRequest("GET", null, "/get_user?userID=" + jsonObj.targetID);
-                var senderUser = await ServerRequest("GET", null, "/get_user?userID=" + jsonObj.senderID);
-                var promptStr = senderUser[0][1] + " votes to change " + targetUser[0][1] + "'s aura by " + jsonObj.aura;
-                var prompt = confirm(promptStr);
+        if(voteCheck != "Ok"){ // There are pending votes
+            var targetUser = await ServerRequest("GET", null, "/get_user?userID=" + voteCheck.targetID);
+            var senderUser = await ServerRequest("GET", null, "/get_user?userID=" + voteCheck.senderID);
+            var promptStr = senderUser[0][1] + " Votes to change " + targetUser[0][1] + "'s Aura by: " + voteCheck.aura;
+
+            var prompt = confirm(promptStr); // Vote?
+            if(prompt){
+                // Send vote decision
+                var voteBody = {userID: localUser.userID, groupID: voteCheck.groupID, vote: prompt};
+                await ServerRequest("POST", JSON.stringify(voteBody), "/submit_vote");
             }
         }
     }

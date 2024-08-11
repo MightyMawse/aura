@@ -10,6 +10,9 @@ async function Login(){
     if(!validUsername || !validPassword)
         return;
 
+    username = username.replaceAll(/\s/g,'');
+    password = password.replaceAll(/\s/g,'');
+
     var accountCount = await ServerRequest("GET", null, 
         "/check_account?username="+ username +"&password=" + password);
 
@@ -35,6 +38,9 @@ async function Register(){
 
     if(!validUsername || !validPassword)
         return;
+
+    username = username.replaceAll(/\s/g,'');
+    password = password.replaceAll(/\s/g,'');
 
     var accountCount = await ServerRequest("GET", null, 
         "/check_account?username="+ username +"&password=" + password);
