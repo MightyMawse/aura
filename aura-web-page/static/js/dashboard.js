@@ -48,5 +48,27 @@ async function CheckVote(){
                 await ServerRequest("POST", JSON.stringify(voteBody), "/submit_vote");
             }
         }
+
+        // Also check for change in aura (a disturbance in the force!)
+        var updateCheck = await ServerRequest("GET", null, "/check_update?groupID=" + localUser.groupID);
+        if(updateCheck == "UPDATE"){
+            var members = await ServerRequest("GET", null, "/get_groupmembers?groupID=" + localUser.groupID);
+            var grid = document.getElementById("peer-grid");
+
+            grid.children.array.forEach(element => {
+                element.remove(); // Clear current and rebuild
+            });
+
+            for(let i = 0; i < members.length; i++){
+                var elementHTML = await ServerRequest("GET", null, "/page?name=dashboard-peer-element", true);
+                var newElement = document.createElement("div");
+                newElement.innerHTML = elementHTML;
+
+                // Set new element info
+                newElement.querySelector("#username").innerText = members[i][1];
+                newElement.querySelector("#aura").innerText = members[i][2];
+                grid.appendChild(newElement);
+            }
+        }
     }
 }

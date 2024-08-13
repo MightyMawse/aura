@@ -7,10 +7,17 @@ async function Init(){
     localUser = JSON.parse(jsonUser);
 
     var users = await ServerRequest("GET", null, "/get_groupmembers?groupID=" + localUser.groupID);
+    var html = await ServerRequest("GET", null, "/page?name=vote-peer-element", true);
+    var parent = document.getElementById("page");
     for(let i = 0; i < users.length; i++){
         var currentUser = users[i]; //id, username, aura, pswrd
         var peerElement = document.createElement("div");
+
+        peerElement.innerHTML = html;
         peerElement.querySelector("#peer").innerText = currentUser[1];
+        //var click = "CallVote(" + currentUser[0] + ")";
+        peerElement.querySelector("#peer").onclick = function() {CallVote(currentUser[0]);};
+        parent.appendChild(peerElement);
     }
 }
 

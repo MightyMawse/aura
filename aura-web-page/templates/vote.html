@@ -7,11 +7,30 @@
         <script src="../static/js/classes/user.js"></script>
     </head>
     <body onload="Init()">
-        <div style="position: relative; top: 100px;">
-            <!--User object-->
-            <div class="option" style="position: relative; height: 150px; width: 100%;">
-                <div id="peer" style="position: relative; top: 50px; left: 20px;" onclick="CallVote()">Username</div>
+        <div style="width: 100%; background-color: gray; height: 151px; position: relative;">
+            <div class="square-button" style="font-size: 60px; width: 150px; padding-top: 40px; padding-bottom: 40px;
+             display: inline-block;" onclick="Redirector('NAV')">
+                <b>&lt</b>
             </div>
+            <p style="display: inline-block; font-size: 50px; position: relative; left: 20%;
+                font-family: Arial, Helvetica, sans-serif;">
+                <b>Vote</b>
+            </p>
+        </div>
+        <div id="page" style="position: relative;">
+            <!--User object-->
+            
         </div>
     </body>
 </html>
+
+<script>
+    // Navigation button handlers
+    function Redirector(button){
+        switch(button){
+            case "NAV":
+                document.location.href = "/page?name=options";
+                break;
+        }
+    }
+</script>

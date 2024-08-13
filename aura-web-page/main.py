@@ -7,8 +7,9 @@ from flask import Request
 
 app = Flask(__name__)
 
-# Terrible design, refactor later
+# Terrible design, refactor later, should be compressed into group class
 voteMap = {}
+updateFlag = [] # groupIDs that need data updated
 
 def init():
    # Initialise voteMap
@@ -102,9 +103,9 @@ def submit_vote():
    userID = jsonObj["userID"]
    groupID = jsonObj["groupID"]
 
-   vc = voteMap[groupID]
+   vc = voteMap[str(groupID)]
    if(int(userID) in vc.groupMemberIDs):
-      voteMap[groupID].groupMemberIDs.remove(int(userID))
+      voteMap[str(groupID)].groupMemberIDs.remove(int(userID))
    return json.dumps("Ok")
 
 # Get user via userID
@@ -114,6 +115,18 @@ def get_user():
    query = sql_interface.SQLInterface.queryMap["GET_USER"].format(userID)
    user = sql_interface.SQLInterface.SQL_query(query)
    return json.dumps(user)
+
+# Check for required updates on our group
+@app.route("/check_update", methods=["GET"])
+def check_update():
+   groupID = request.args.get("groupID")
+
+   if(voteMap[str(groupID)] != None):
+      voteMap[str(groupID)].CheckVote()
+
+   if(groupID in updateFlag):
+      return json.dumps("UPDATE")
+   return json.dumps("Ok")
 
 if __name__ == '__main__':
    init()
