@@ -26,4 +26,6 @@ class Vote:
             alteredAura = currentAura[0][0] + int(self.aura)
             query = "UPDATE users SET aura = {0} WHERE userID = {1};".format(alteredAura, self.targetID)
             sql_interface.SQLInterface.SQL_query(query)
-            main.voteMap[str(self.groupID)] = None # NOT WORKING, FIND WAY TO REMOVE CLASS FROM MAP!
+            #main.voteMap[str(self.groupID)] = None # NOT WORKING, FIND WAY TO REMOVE CLASS FROM MAP!
+            return True
+        return False

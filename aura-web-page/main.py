@@ -122,7 +122,9 @@ def check_update():
    groupID = request.args.get("groupID")
 
    if(voteMap[str(groupID)] != None):
-      voteMap[str(groupID)].CheckVote()
+      if(voteMap[str(groupID)].CheckVote()):
+         voteMap[str(groupID)] = None
+         updateFlag.append(groupID)
 
    if(groupID in updateFlag):
       return json.dumps("UPDATE")
