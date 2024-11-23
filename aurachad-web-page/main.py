@@ -5,19 +5,71 @@ import vote
 import aura
 from flask import *
 from flask import Request
+from flask_socketio import SocketIO, send, emit, join_room, leave_room
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'secret!'
+socketio = SocketIO(app)
+clients = []
 
 @app.route("/")
 def root():
    aura.Init()
    return render_template("login.html")
 
+@socketio.on("refresh")
+def handle_refresh(room):
+   print(str(request.sid) + " requests a dashboard refresh")
+   socket_broadcast("refresh", "FLAG", room)
+
+@socketio.on("call_vote")
+def handle_vote(data):
+   jsonData = json.loads(data)
+   callvote(jsonData)
+   socket_broadcast(jsonData, "VOTECALL", jsonData["room"])
+
+@socketio.on('message')
+def handle_message(msg):
+    print('Message: ' + msg)
+    socket_direct(request.sid, "Hello " + str(request.sid), "MSG")
+
+@socketio.on('connect')
+def handle_connect():
+    print('Client connected')
+    clients.append(request.sid)
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    print('Client disconnected')
+
+@socketio.on('join')
+def on_join(data):
+    username = data['username']
+    room = data['room']
+    join_room(room)
+    send(username + ' has entered the room.', to=room)
+
+@socketio.on('leave')
+def on_leave(data):
+    username = data['username']
+    room = data['room']
+    leave_room(room)
+    send(username + ' has left the room.', to=room)
+
 # Get page
 @app.route("/page")
 def page():
    page = request.args.get("name")
    return render_template(page + ".html")
+
+# Broadcasts to all clients connected via socket
+def socket_broadcast(msg, type, room):
+   msgObj = {"type" : type, "content": msg}
+   send(json.dumps(msgObj), to=room)
+
+def socket_direct(sid, msg, type):
+   msgObj = {"type" : type, "content": msg}
+   send(msgObj, to=sid)
 
 # Raw SQL query, potential vulnerability
 @app.route("/sql_query", methods=['POST'])
@@ -71,24 +123,17 @@ async def get_groupmembers_exclusive():
    userID = request.args.get("userID")
    return await aura.GetGroupMembersExclusive(groupID, userID)
 
-@app.route("/callvote", methods=["POST"])
-async def callvote():
+# Called by socket
+def callvote(json):
    # Create new vote class instance and add to votemap, 
    # vote instance will stay until resolved by group members
-   jsonObj  = request.json # POST body
+   jsonObj  = json # POST body
    groupID  = jsonObj["groupID"]
    auraVal  = jsonObj["aura"]
    targetID = jsonObj["targetID"]
    senderID = jsonObj["senderID"]
 
-   return await aura.CallVote(groupID, auraVal, targetID, senderID)
-
-# Return list of all votes that are active on groupID
-@app.route("/check_votemap", methods=["GET"])
-async def check_votemap():
-   groupID = request.args.get("groupID")
-   userID = request.args.get("userID")
-   return await aura.CheckVoteMap(groupID, userID)
+   return aura.CallVote(groupID, auraVal, targetID, senderID)
 
 # Submit vote to votemap
 @app.route("/submit_vote", methods=["POST"])
@@ -106,13 +151,6 @@ async def get_user():
    query = sql_interface.SQLInterface.queryMap["GET_USER"].format(userID)
    user = sql_interface.SQLInterface.SQL_query(query)
    return json.dumps(user)
-
-# Check for required updates on our group
-@app.route("/check_update", methods=["GET"])
-async def check_update():
-   groupID = request.args.get("groupID")
-   userID = request.args.get("userID")
-   return await aura.CheckUpdate(groupID, userID)
 
 @app.route("/group_code", methods=["GET"])
 async def group_code():
@@ -134,3 +172,4 @@ async def join():
 if __name__ == '__main__':
    #init()
    app.run(host='0.0.0.0', debug=True, port=5000)
+   #socketio.run(app, debug=True)

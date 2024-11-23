@@ -21,7 +21,7 @@ def Init():
         groupCode = random.randrange(1000, 9999)
         groupCodeMap.update({groupCode: str(group[0])})
 
-async def CallVote(groupID, aura, targetID, senderID):
+def CallVote(groupID, aura, targetID, senderID):
     newVote = vote.Vote(groupID, aura, targetID, senderID)
     if(str(groupID) in voteMap):
         voteMap[str(groupID)] = newVote # Change vote, subsequent votes will overwrite if not resolved
@@ -29,6 +29,7 @@ async def CallVote(groupID, aura, targetID, senderID):
         voteMap.update({str(groupID): newVote}) # Add it this way if not already in map
     return json.dumps("Ok")
 
+# OBSOLETE
 async def CheckVoteMap(groupID, userID):
     try:
         if(voteMap[groupID] != None):
@@ -45,10 +46,12 @@ async def SubmitVote(userID, groupID, vote):
 
             voteObj.Vote(vote) # Submit our vote
             voteObj.groupMemberIDs.remove(int(userID))
+            voteMap[str(groupID)].CheckVote() # Check if the vote is complete and can be resolved
         return json.dumps("Ok")
     except:
         return json.dumps("Error")
 
+# OBSOLETE
 async def CheckUpdate(groupID, userID):
     if(voteMap[str(groupID)] != None): # Adds to updateFlags
         if(await voteMap[str(groupID)].CheckVote()):

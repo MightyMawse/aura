@@ -1,10 +1,9 @@
-var localUser = null;
 
-async function Init(){
+async function VoteInit(){
     // Add all peers to vote screen
     // Get local user class first
-    var jsonUser = sessionStorage.getItem("user");
-    localUser = JSON.parse(jsonUser);
+    //var jsonUser = sessionStorage.getItem("user");
+    //localUser = JSON.parse(jsonUser);
 
     var users = await ServerRequest("GET", null, "/get_groupmembers_exclusive?groupID=" + localUser.groupID + "&userID=" + localUser.userID);
     var html = await ServerRequest("GET", null, "/page?name=vote-peer-element", true);
@@ -43,6 +42,8 @@ async function CallVote(targetID){
     }
 
     // This will add a vote to the voteMap, every active user will be notified
-    var body = {groupID: localUser.groupID, aura: auraAmount, targetID: targetID, senderID: localUser.userID};
-    var vote = await ServerRequest("POST", JSON.stringify(body), "/callvote");
+    var body = {groupID: localUser.groupID, aura: auraAmount, targetID: targetID, senderID: localUser.userID, room: localUser.groupCode};
+    //var vote = await ServerRequest("POST", JSON.stringify(body), "/callvote");
+
+    socket.emit("call_vote", JSON.stringify(body)); // Try call the vote
 }

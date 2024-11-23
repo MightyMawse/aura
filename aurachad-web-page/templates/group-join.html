@@ -28,31 +28,3 @@
         </div>
     </body>
 </html>
-
-<script>
-    var localUser = null;
-    async function Join(){
-        localUser = JSON.parse(sessionStorage.getItem("user"));
-        var groupCode = document.getElementById("gc").value;
-        var groupID = await ServerRequest("GET", null, "/join?groupCode=" + groupCode + "&userID=" + localUser.userID);
-        if(groupID != "Error"){
-            localUser.groupID = groupID;
-            sessionStorage.setItem("user", JSON.stringify(localUser));
-            document.location.href = "/page?name=dashboard";
-        }
-        else if(groupID == "Exists"){
-            alert("Already in Group");
-        }
-        else{
-            alert("Group Doesn't Exist");
-        }
-    }
-
-    function Redirector(button){
-        switch(button){
-            case "NAV":
-                document.location.href = "/page?name=options";
-                break;
-        }
-    }
-</script>

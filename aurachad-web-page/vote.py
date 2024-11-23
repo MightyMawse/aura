@@ -36,7 +36,7 @@ class Vote:
             self.noVotes += 1
 
     # Check if vote has been resolved
-    async def CheckVote(self):
+    def CheckVote(self):
         allVotesMade = True if self.yesVotes + self.noVotes == self.memberCount else False
         if(len(self.groupMemberIDs) == 0 & self.resolved == False & allVotesMade):
             # Update aura

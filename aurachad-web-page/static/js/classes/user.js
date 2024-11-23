@@ -4,6 +4,8 @@ class User{
         "AURA": 2,
     };
 
+    groupCode = null;
+
     constructor(username, userID, aura, groupID){
         this.username = username;
         this.userID = userID;

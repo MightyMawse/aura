@@ -6,7 +6,7 @@
         <script src="../static/js/utils.js"></script>
         <script src="../static/js/classes/user.js"></script>
     </head>
-    <body onload="Init()">
+    <body>
         <div style="width: 100%; background-color: gray; height: 151px; position: relative;">
             <div class="square-button" style="font-size: 60px; width: 150px; padding-top: 40px; padding-bottom: 40px;
              display: inline-block;" onclick="Redirector('NAV')">
@@ -23,14 +23,3 @@
         </div>
     </body>
 </html>
-
-<script>
-    // Navigation button handlers
-    function Redirector(button){
-        switch(button){
-            case "NAV":
-                document.location.href = "/page?name=options";
-                break;
-        }
-    }
-</script>
