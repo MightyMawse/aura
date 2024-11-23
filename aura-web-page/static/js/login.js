@@ -70,7 +70,7 @@ async function LoginProcedure(username, password){
     const groupIDQuery = {query: "SELECT groupID FROM partymembers WHERE userID =" + user.userID + ";"};
     var groupID = await ServerRequest("POST", JSON.stringify(groupIDQuery), "/sql_query");
     
-    if(groupID[0].length > 0){
+    if(groupID.length > 0){
         user.groupID = groupID[0][0]; // Try and set the group id if there is one
     }
 

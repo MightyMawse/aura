@@ -22,14 +22,14 @@
         <div class="option" style="position: relative; height: 150px; width: 100%;">
             <div style="position: relative; top: 50px; left: 20px;" onclick="Redirector('JOIN')"><b>Join Group</b></div>
         </div>
-        <div class="option" style="position: relative; height: 150px; width: 100%;">
+        <div class="option disabled" style="position: relative; height: 150px; width: 100%;">
             <div style="position: relative; top: 50px; left: 20px;" onclick="Redirector('')"><b>Leave Group</b></div>
         </div>
-        <div class="option" style="position: relative; height: 150px; width: 100%;">
+        <div class="option disabled" style="position: relative; height: 150px; width: 100%;">
             <div style="position: relative; top: 50px; left: 20px;" onclick="Redirector('')"><b>Create Group</b></div>
         </div>
         <div class="option" style="position: relative; height: 150px; width: 100%;">
-            <div style="position: relative; top: 50px; left: 20px;" onclick="Redirector('')"><b>Log Out</b></div>
+            <div style="position: relative; top: 50px; left: 20px;" onclick="Redirector('LOGOUT')"><b>Log Out</b></div>
         </div>
     </body>
 </html>
@@ -42,7 +42,7 @@
                 document.location.href = "/page?name=vote";
                 break;
             case "JOIN":
-                document.location.href = "/page?name=group-viewer";
+                document.location.href = "/page?name=group-join";
                 break;
             case "LEAVE":
                 document.location.href = "/page?name="; // WIP
@@ -52,6 +52,12 @@
                 break;
             case "BACK":
                 document.location.href = "/page?name=dashboard";
+                break;
+            case "LOGOUT":
+                localUser = null;
+                document.location.href = "/";
+                break;
+            default:
                 break;
         }
     }

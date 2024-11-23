@@ -1,0 +1,58 @@
+<html>
+    <head>
+        <title>Navigator</title>
+        <link rel="stylesheet" href="../static/css/default.css">
+        <script src="../static/js/utils.js"></script>
+        <script src="../static/js/dashboard.js"></script>
+    </head>
+    <body style="background-color: rgb(102, 102, 102);">
+        <div style="width: 100%; background-color: gray; height: 151px; position: relative;">
+            <div class="square-button" style="font-size: 60px; width: 150px; padding-top: 40px; padding-bottom: 40px;
+             display: inline-block;" onclick="Redirector('NAV')">
+                <b>&lt</b>
+            </div>
+            <p style="display: inline-block; font-size: 50px; position: relative; left: 20%;
+                font-family: Arial, Helvetica, sans-serif;">
+                <b>Navigator</b>
+            </p>
+        </div>
+
+        <div class="flex-center" style="margin-top: 300px;">
+            <input id="gc" type="text" class="input" placeholder="Group code...">
+        </div>
+        <div class="flex-center">
+            <div class="button" style="width: 350px; padding-top: 40px; padding-bottom: 40px;
+            font-size: 50px; margin-top: 100px;" onclick="Join()">
+                Join
+            </div>
+        </div>
+    </body>
+</html>
+
+<script>
+    var localUser = null;
+    async function Join(){
+        localUser = JSON.parse(sessionStorage.getItem("user"));
+        var groupCode = document.getElementById("gc").value;
+        var groupID = await ServerRequest("GET", null, "/join?groupCode=" + groupCode + "&userID=" + localUser.userID);
+        if(groupID != "Error"){
+            localUser.groupID = groupID;
+            sessionStorage.setItem("user", JSON.stringify(localUser));
+            document.location.href = "/page?name=dashboard";
+        }
+        else if(groupID == "Exists"){
+            alert("Already in Group");
+        }
+        else{
+            alert("Group Doesn't Exist");
+        }
+    }
+
+    function Redirector(button){
+        switch(button){
+            case "NAV":
+                document.location.href = "/page?name=options";
+                break;
+        }
+    }
+</script>

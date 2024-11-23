@@ -80,6 +80,11 @@ body{
     color: whitesmoke;
 }
 
+.option.disabled{
+    background-color: rgb(87, 87, 87);
+    color: gray;
+}
+
 .vote-user{
     border-bottom: solid black 1px;
     background-color: gray;
